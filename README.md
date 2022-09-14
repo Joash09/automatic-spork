@@ -12,7 +12,7 @@ python main.py
 
 # Question 1
 
-Ideally, both the parasite and dye images are represented as a 2D array of pixels where each pixel represents a single bit. However, the smallest indexable space in memory is a single byte. For example, Python will represent an array of boolean values as an array of uint8. The *bit packing* technique overcomes this challenge by each element in the array represents a number of pixels equal to the size of that element. For example, each element in an array of type unint8 represents 8 pixels. Similarly we can store the image on disk with the [PGM format](https://users.wpi.edu/~cfurlong/me-593n/pgmimage.html) which also uses 1 byte to represent 8 pixels. This format is useful saving as much space as possible without using a lossy format like JPEG.
+Ideally, both the parasite and dye images are represented as a 2D array of pixels where each pixel represents a single bit. However, the smallest indexable space in memory is a single byte. For example, Python will represent an array of boolean values as an array of uint8. The *bit packing* technique overcomes this challenge. Using bit packing, each element in the array represents a number of pixels equal to the size of that element. For example, each element in an array of type uint8 represents 8 pixels. Similarly we can store the image on disk with the [PGM format](https://users.wpi.edu/~cfurlong/me-593n/pgmimage.html) which also uses 1 byte to represent 8 pixels. This format is useful saving as much space as possible without using a lossy format like JPEG.
 
 An image which resolution of 100 000 x 100 000 pixels multiplied by one bit per pixel gives total number of bits. Dividing by 8 gives total number of bytes. Finally, dividing by 10^9 gives total number of Gigabytes (approx. 1.25 GB). Multiplied by the expected 1000 images gives the worst case disk usage (approx 1.25 TB)
 
@@ -54,7 +54,7 @@ for i in range(num_dye_spots):
                     fill=1)
 ```
 
-For the sake of rapid prototyping and limitations with the Pillow library, I have kept the resolution of the images to be 10 000 x 10 000. 
+For the sake of rapid prototyping and limitations with the Pillow library, I have kept the resolution of the images to be 10 000 x 10 000. Please see examples included in 'examples' folder. Kept as JPEG also for ease of use.
 
 ![Parasite Example](./examples/parasite-0.jpg)
 ![Dye Example](./examples/dye-0.jpg)

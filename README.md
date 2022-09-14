@@ -99,4 +99,4 @@ def has_cancer_multithreaded(parasite_path, dye_path):
 
 Unfortunately, after testing both single and multithreaded performance, I did not see any expected speed up. Instead I saw a performance loss. I believe this is be a language (interpreter) issue as opposed to algorithm. Tuning the chunksize had little effect.
 
-![MultithreadPerformance]('./multithread-performance.jpg')
+![MultithreadPerformance]('multithread-performance.jpg')

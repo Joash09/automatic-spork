@@ -20,7 +20,7 @@ def noise(theta, weights, phases):
         + weights[3]*sin(4*theta+2*pi*phases[3]) \
         + weights[4]*sin(5*theta+2*pi*phases[4])
 
-def generate_bacteria(output_path, radius_scale, offset):
+def generate_parasite(output_path, radius_scale, offset):
     image = Image.new("1", (resolution, resolution), "white")
     draw = ImageDraw.Draw(image)
 
@@ -57,40 +57,42 @@ def generate_dye(output_path, radius_scale, offset):
 
     image.save(output_path)
 
-def has_cancer(total_bacteria_size, total_overlap):
-    return (total_overlap/total_bacteria_size) > 0.1
+def has_cancer(total_parasite_size, total_overlap):
+    return (total_overlap/total_parasite_size) > 0.1
 
-def analyse_image(bacteria_path, dye_path):
-    bacteria = packbits(array(Image.open(bacteria_path).convert("1")))
+def analyse_image(parasite_path, dye_path):
+    parasite = packbits(array(Image.open(parasite_path).convert("1")))
     dye = packbits(array(Image.open(dye_path).convert("1")))
-    total_bacteria_size = 0
+    total_parasite_size = 0
     total_overlap = 0
     start_time = time.time()
-    for i in range(len(bacteria)):
-        total_bacteria_size += bin(invert(bacteria[i])).count('1')
-        total_overlap += bin(bitwise_and(invert(bacteria[i]), dye[i])).count('1')
+    for i in range(len(parasite)):
+        total_parasite_size += bin(invert(parasite[i])).count('1')
+        total_overlap += bin(bitwise_and(invert(parasite[i]), dye[i])).count('1')
     print("--- {time} | Single thread ---".format(time=time.time()-start_time))
-    return has_cancer(total_bacteria_size, total_overlap)
+    print(" Total parasite size: {total_parasite_size} | Total overlap size {total_overlap}".format(total_parasite_size=total_parasite_size, total_overlap=total_overlap))
+    return has_cancer(total_parasite_size, total_overlap)
 
-def analyse_bacteria(bacteria, dye):
-    bacteria_size = bin(invert(bacteria)).count('1') # count number of bacteria pixels inverted
-    overlap = bin(bitwise_and(invert(bacteria), dye)).count('1') # count inverted bacteria and dye pixels
-    return (bacteria_size, overlap)
+def analyse_parasite(parasite, dye):
+    parasite_size = bin(invert(parasite)).count('1') # count number of parasite pixels inverted
+    overlap = bin(bitwise_and(invert(parasite), dye)).count('1') # count inverted parasite and dye pixels
+    return (parasite_size, overlap)
 
-def analyse_image_multithreaded(bacteria_path, dye_path):
-    bacteria = packbits(array(Image.open(bacteria_path).convert("1")))
+def analyse_image_multithreaded(parasite_path, dye_path):
+    parasite = packbits(array(Image.open(parasite_path).convert("1")))
     dye = packbits(array(Image.open(dye_path).convert("1")))
 
-    total_bacteria_size = 0
+    total_parasite_size = 0
     total_overlap = 0
     nproc = os.cpu_count()
     start_time = time.time()
     with Pool(processes=nproc) as pool:
-        for bact, overlap in pool.starmap(analyse_bacteria, list(zip(bacteria, dye)), chunksize=shape(bacteria)[0]//nproc):
-            total_bacteria_size += bact
+        for bact, overlap in pool.starmap(analyse_parasite, list(zip(parasite, dye)), chunksize=shape(parasite)[0]//nproc):
+            total_parasite_size += bact
             total_overlap += overlap
-    print("--- {time} | Multithread {chunksize} ---".format(time=time.time()-start_time, chunksize=shape(bacteria)[0]//nproc))
-    return has_cancer(total_bacteria_size, total_overlap)
+    print("--- {time} | Multithread {chunksize} ---".format(time=time.time()-start_time, chunksize=shape(parasite)[0]//nproc))
+    print(" Total parasite size: {total_parasite_size} | Total overlap size {total_overlap}".format(total_parasite_size=total_parasite_size, total_overlap=total_overlap))
+    return has_cancer(total_parasite_size, total_overlap)
 
 if __name__ == "__main__":
 
@@ -98,16 +100,16 @@ if __name__ == "__main__":
 
     # generate test data
     for i in range(num_test_images):
-        radius_scale = randint(resolution//4, resolution//2) # bacteria must take up at least 25% of total
+        radius_scale = randint(resolution//4, resolution//2) # parasite must take up at least 25% of total
         offset = randint(0, radius_scale//2) # additional offset for placement on image
-        generate_bacteria("bacteria-{index}.jpg".format(index = i), radius_scale, offset)
-        generate_dye("dye-{index}.jpg".format(index = i), radius_scale, offset)
+        generate_parasite("parasite-{index}.pgm".format(index = i), radius_scale, offset)
+        generate_dye("dye-{index}.pgm".format(index = i), radius_scale, offset)
 
     # test parasite image for cancer
     for i in range(num_test_images):
-        result = analyse_image("bacteria-{index}.jpg".format(index = i), "dye-{index}.jpg".format(index = i))
-        # result = analyse_image_multithreaded("bacteria-{index}.jpg".format(index = i), "dye-{index}.jpg".format(index = i))
+        result = analyse_image("parasite-{index}.jpg".format(index = i), "dye-{index}.jpg".format(index = i))
+        # result = analyse_image_multithreaded("parasite-{index}.jpg".format(index = i), "dye-{index}.jpg".format(index = i))
         if result:
-          print("bacteria {index} has cancer".format(index=i))
+          print("parasite {index} has cancer".format(index=i))
         else:
-          print("bacteria {index} does not have cancer".format(index=i))
+          print("parasite {index} does not have cancer".format(index=i))

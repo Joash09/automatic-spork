@@ -16,7 +16,7 @@ Ideally, both the parasite and dye images are represented as a 2D array of pixel
 
 An image which resolution of 100 000 x 100 000 pixels multiplied by one bit per pixel gives total number of bits. Dividing by 8 gives total number of bytes. Finally, dividing by 10^9 gives total number of Gigabytes (approx. 1.25 GB). Multiplied by the expected 1000 images gives the worst case disk usage (approx 1.25 TB)
 
-To convert an image into a bit packed from we can use Numpy's packbits feature.
+To convert an image into a bit packed form we can use Numpy's packbits feature.
 
 ```python
 parasite = packbits(array(Image.open(parasite_path).convert("1")))
@@ -25,7 +25,7 @@ dye = packbits(array(Image.open(dye_path).convert("1")))
 
 # Question 2
 
-Images were create with Python's Pillow Image library. Generating the parasite begins with first generating a circle using polar co-ordinates. Given we are calculating the radius for a given angle, it is easy to introduce *noise* in the form of randomly weighted and phase shifted sinusoidal functions. This noise produces the blob shape as opposed to perfect circle. Defining a random offset changes the center of parasite to be more realistic.
+Images were created with Python's Pillow Image library. Generating the parasite begins with first generating a circle using polar co-ordinates. Given we are calculating the radius for a given angle, it is easy to introduce *noise* in the form of randomly weighted and phase shifted sinusoidal functions. This noise produces the blob shape as opposed to perfect circle. Defining a random offset changes the center of parasite to be more realistic.
 
 ```python
 def noise(theta, weights, phases):
@@ -54,7 +54,7 @@ for i in range(num_dye_spots):
                     fill=1)
 ```
 
-For the sake of rapid prototyping and limitations with the Pillow library, I have kept the resolution of the images to be 10 000 x 10 000. Please see examples included in 'examples' folder. Kept as JPEG also for ease of use.
+For the sake of rapid prototyping and limitations with the Pillow library, I have kept the resolution of the images to be 10 000 x 10 000. Please see examples included in 'examples' folder. I kept these examples as JPEG also for ease of use.
 
 ![Parasite Example](./examples/parasite-0.jpg)
 ![Dye Example](./examples/dye-0.jpg)
